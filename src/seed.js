@@ -5,30 +5,30 @@ const { Category, Product, Role, Token, User } = require('../models/init-models'
 async function main() {
   await Promise.all([Category, Product, Role, Token, User].map(m => m.destroy({ truncate: true })))
   await sequilize.query("DELETE FROM sqlite_sequence")
-  const rand = (max = 500) => Math.floor(Math.random() * max)
+  const rand = (max = 2000) => Math.floor(Math.random() * (max - 1)) + 1
   let cr = [];
   for (let n = 1; n <= 2000; n++) {
-    cr.push(Category.create({ name: "cat" + n }));
+    cr.push({ name: "cat" + n });
   }
-  await Promise.allSettled(cr)
+  await Category.bulkCreate(cr);
 
   cr = [];
   for (let n = 1; n <= 2000; n++) {
-    cr.push(Product.create({ name: "product" + n, price: rand(), stock: 0, categoryId: rand() }));
+    cr.push({ name: "product" + n, price: rand(), stock: 0, categoryId: rand() });
   }
-  await Promise.allSettled(cr)
+  await Product.bulkCreate(cr);
 
   cr = [];
   for (let n = 1; n <= 2000; n++) {
-    cr.push(Role.create({ role: "role" + n }));
+    cr.push({ role: "role" + n });
   }
-  await Promise.allSettled(cr)
+  await Role.bulkCreate(cr);
 
   cr = [];
   for (let n = 1; n <= 2000; n++) {
-    cr.push(User.create({ username: "user" + n, roleId: rand() }));
+    cr.push({ username: "user" + n, roleId: rand() });
   }
-  await Promise.allSettled(cr)
+  await User.bulkCreate(cr);
 }
 
 if (module == require.main) main()
