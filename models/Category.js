@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-module.exports = function (sequelize, DataTypes) {
+module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Category', {
     id: {
       autoIncrement: true,
@@ -27,6 +27,13 @@ module.exports = function (sequelize, DataTypes) {
         unique: true,
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "sqlite_autoindex_Category_2",
+        unique: true,
+        fields: [
+          { name: "name" },
         ]
       },
     ]
