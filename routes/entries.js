@@ -8,6 +8,8 @@ router.get('/:table', (req, res) => {
   const page = req.query.page ? (parseInt(req.query.page) ?? 0) : 0;
   const limit = parseInt(req.query.count);
   const sort = req.query.sort?.split(",").map(s => [s.replace(/^-/, ""), /^-/.test(s) ? "DESC" : "ASC"])
+  const fields = req.query.fields?.split(",")
+  const include = req.query.include?.split(",")
 
   // JSON:API filter support - filter[field][operator]=value
   const filters = {};
@@ -54,6 +56,19 @@ router.get('/:table', (req, res) => {
   const options = (page != undefined && page >= 0 && limit >= 0) ? { limit: limit, offset: page * limit } : { limit: 50, offset: 0 };
   if (sort && sort[0].length) options.order = sort
   if (Object.keys(filters).length > 0) options.where = filters;
+  if (fields && fields.length) options.attributes = fields;
+
+  // Validate and process includes
+  if (include && include.length) {
+    const validIncludes = [];
+    include.forEach(relationName => {
+      // Check if the association exists on the model
+      if (table.associations && table.associations[relationName]) {
+        validIncludes.push({ model: table.associations[relationName].target, as: relationName });
+      }
+    });
+    if (validIncludes.length) options.include = validIncludes;
+  }
 
   table.findAndCountAll(options)
     .then(({ count: total, rows }) => res.json({ total, currentPage: page ?? 0, totalPages: Math.ceil(total / limit), entries: rows }))
