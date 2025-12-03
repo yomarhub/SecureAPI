@@ -11,15 +11,16 @@ const app = express()
 app.use(express.json());
 app.models = models;
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.send('Hello World')
 })
-app.use('/products', require('./routes/products'));
-app.use('/categories', require('./routes/categories'));
-app.use('/users', require('./routes/users'));
-app.use('/tokens', require('./routes/tokens'));
+// app.use('/products', require('./routes/products'));
+// app.use('/categories', require('./routes/categories'));
+// app.use('/roles', require('./routes/roles'))
+// app.use('/users', require('./routes/users'));
+// app.use('/tokens', require('./routes/tokens'));
+app.use('/', require('./routes/entries'));
 
 app.listen(PORT, () => {
-  models.Product.findAll().then(console.log);
   console.log(`Server is running on http://localhost:${PORT}`)
 })
