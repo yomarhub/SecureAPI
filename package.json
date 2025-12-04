@@ -9,7 +9,6 @@
   "scripts": {
     "start": "node .",
     "dev": "nodemon .",
-    "sequelize": "sequelize-auto -o \"./models\" -d ./data/database.sqlite -e sqlite",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
