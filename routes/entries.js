@@ -4,6 +4,7 @@ const { Op } = require('sequelize');
 const { TokenChecker } = require('../src/middlewares');
 const map = { products: "Product", categories: "Category", roles: "Role", users: "User", tokens: "Token" };
 
+router.use(TokenChecker());
 router.get('/profile', (req, res) => {
   const { User } = req.app.models;
   req.payload?.userId ?
@@ -11,10 +12,10 @@ router.get('/profile', (req, res) => {
       .then(user => res.json(user))
       .catch(e => res.status(500).json(e))
     :
-  res.json("No user logged in");
+  res.json(req.app.payload);
 });
 
-router.get('/:table', TokenChecker, (req, res) => {
+router.get('/:table', (req, res) => {
   const page = req.query.page ? (parseInt(req.query.page) ?? 0) : 0;
   const limit = parseInt(req.query.count);
   const sort = req.query.sort?.split(",").map(s => [s.replace(/^-/, ""), /^-/.test(s) ? "DESC" : "ASC"])

@@ -14,8 +14,8 @@ app.models = models;
 app.get('/', (_req, res) => {
   res.send('Hello World')
 })
-app.use('/', require('./routes/entries'));
 app.use('/auth', require('./routes/auth'));
+app.use('/', require('./routes/entries'));
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`)

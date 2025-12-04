@@ -9,7 +9,7 @@ router.post('/login', (req, res) => {
   const { User, Token } = req.app.models;
   const { username, password } = req.body;
 
-  User.findOne({ include: "role", where: { username } }).then(async user => {
+  if (username && password) User.findOne({ include: "role", where: { username } }).then(async user => {
     if (!user || !await CheckHash(password, user.hashedPassword)) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -17,7 +17,8 @@ router.post('/login', (req, res) => {
     const { accessToken, refreshToken } = await UpdateOrCreateToken({ Token }, user);
     SendTokens(res, accessToken, refreshToken);
   })
-    .catch(e => res.status(500).json({ erro: e, body: req.body }));
+    .catch(e => res.status(500).json(e));
+  else res.status(400).json({ message: 'Username and password are required' });
 });
 
 router.post('/refresh', async (req, res) => {

@@ -8,9 +8,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "test": "node .",
     "dev": "nodemon .",
-    "sequelize": "sequelize-auto -o \"./models\" -d ./data/database.sqlite -e sqlite"
+    "sequelize": "sequelize-auto -o \"./models\" -d ./data/database.sqlite -e sqlite",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
