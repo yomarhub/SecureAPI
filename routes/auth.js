@@ -26,7 +26,7 @@ router.post('/refresh', async (req, res) => {
   if (!rtHash) return res.status(401).json({ message: 'No refresh token provided' });
 
   const rt = await FindTokenSession(req.app.models)(rtHash);
-  if (!rt || rt.expiresAt < new Date()) return res.status(401).json({ message: 'Invalid or expired refresh token' });
+  if (!rt || rt.expiresAt < new Date()) return res.status(401).json({ message: (!rt ? 'Invalid' : 'Expired') + ' refresh token' });
 
   console.log(rt);
   const { accessToken, refreshToken } = await UpdateOrCreateToken(req.app.models, { id: rt.userId });

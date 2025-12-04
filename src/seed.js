@@ -8,7 +8,7 @@ const { Category, Product, Role, Token, User } = require('../models/init-models'
 async function main() {
   await Promise.all([Category, Product, Role, Token, User].map(m => m.destroy({ truncate: true })));
   await sequilize.query('DELETE FROM sqlite_sequence');
-  const rand = ({ max = 2000, floor = true }) => floor ? Math.floor(Math.random() * (max - 1)) + 1 : Math.random() * (max - 1) + 1;
+  const rand = ({ max = 2000, floor = true } = {}) => floor ? Math.floor(Math.random() * (max - 1)) + 1 : Math.random() * (max - 1) + 1;
   let cr = [];
   for (let n = 1; n <= 2000; n++) {
     cr.push({ name: 'cat' + n });
@@ -17,7 +17,7 @@ async function main() {
 
   cr = [];
   for (let n = 1; n <= 2000; n++) {
-    cr.push({ name: 'product' + n, price: rand({ floor: true }), stock: rand(), categoryId: rand() });
+    cr.push({ name: 'product' + n, price: rand({ floor: false }), stock: rand(), categoryId: rand() });
   }
   await Product.bulkCreate(cr);
 
@@ -35,4 +35,3 @@ async function main() {
 }
 
 if (module == require.main) main();
-// else (async () => await sequilize.sync())();
