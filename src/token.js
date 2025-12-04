@@ -6,9 +6,9 @@ const GenerateAccessToken = ({ id, role }) => jwt.sign({ userId: id, role }, pro
 const GenerateRefreshToken = ({ id }) => ({
   userId: id,
   hash: crypto.randomBytes(32).toString('hex'),
-  expiresAt: datetoken("now+" + process.env.JWT_REFRESH_EXPIRATION)
+  expiresAt: datetoken('now+' + process.env.JWT_REFRESH_EXPIRATION)
 });
-const GenerateTokens = (user) => ({ accessToken: GenerateAccessToken(user), refreshToken: GenerateRefreshToken(user) })
+const GenerateTokens = (user) => ({ accessToken: GenerateAccessToken(user), refreshToken: GenerateRefreshToken(user) });
 
 const SendTokens = (res, accessToken, { hash, expiresAt }) => res.cookie('rt', hash, {
   httpOnly: true,
@@ -21,7 +21,7 @@ const SendTokens = (res, accessToken, { hash, expiresAt }) => res.cookie('rt', h
 function FindTokenSession({ Token }) {
   return async function (key) {
     return await Token.findOne({ where: { hash: key } });
-  }
+  };
 }
 
 async function UpdateOrCreateToken({ Token }, user) {

@@ -11,6 +11,6 @@ function TokenChecker() {
       req.user = payload;
       next();
     });
-  }
+  };
 }
 module.exports = { TokenChecker };

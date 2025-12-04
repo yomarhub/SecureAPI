@@ -9,7 +9,7 @@ router.post('/login', (req, res) => {
   const { User, Token } = req.app.models;
   const { username, password } = req.body;
 
-  if (username && password) User.findOne({ include: "role", where: { username } }).then(async user => {
+  if (username && password) User.findOne({ include: 'role', where: { username } }).then(async user => {
     if (!user || !await CheckHash(password, user.hashedPassword)) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }

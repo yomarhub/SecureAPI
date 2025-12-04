@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { Op } = require('sequelize');
 const { TokenChecker } = require('../src/middlewares');
-const map = { products: "Product", categories: "Category", roles: "Role", users: "User", tokens: "Token" };
+const map = { products: 'Product', categories: 'Category', roles: 'Role', users: 'User', tokens: 'Token' };
 
 router.use(TokenChecker());
 router.get('/profile', (req, res) => {
   const { User } = req.app.models;
   req.payload?.userId ?
-    User.findByPk(req.payload.userId, { include: ["role"] })
+    User.findByPk(req.payload.userId, { include: ['role'] })
       .then(user => res.json(user))
       .catch(e => res.status(500).json(e))
     :
@@ -18,9 +18,9 @@ router.get('/profile', (req, res) => {
 router.get('/:table', (req, res) => {
   const page = req.query.page ? (parseInt(req.query.page) ?? 0) : 0;
   const limit = parseInt(req.query.count);
-  const sort = req.query.sort?.split(",").map(s => [s.replace(/^-/, ""), /^-/.test(s) ? "DESC" : "ASC"])
-  const fields = req.query.fields?.split(",")
-  const include = req.query.include?.split(",")
+  const sort = req.query.sort?.split(',').map(s => [s.replace(/^-/, ''), /^-/.test(s) ? 'DESC' : 'ASC']);
+  const fields = req.query.fields?.split(',');
+  const include = req.query.include?.split(',');
 
   const filters = {};
   Object.keys(req.query).forEach(key => {
@@ -62,9 +62,9 @@ router.get('/:table', (req, res) => {
     }
   });
 
-  const table = req.app.models[map[req.params.table]]
+  const table = req.app.models[map[req.params.table]];
   const options = (page != undefined && page >= 0 && limit >= 0) ? { limit: limit, offset: page * limit } : { limit: 50, offset: 0 };
-  if (sort && sort[0].length) options.order = sort
+  if (sort && sort[0].length) options.order = sort;
   if (Object.keys(filters).length > 0) options.where = filters;
   if (fields && fields.length) options.attributes = fields;
 
@@ -86,7 +86,7 @@ router.get('/:table', (req, res) => {
 });
 
 router.post('/:table', (req, res) => {
-  const table = req.app.models[map[req.params.table]]
+  const table = req.app.models[map[req.params.table]];
   table.create(req.body)
     .then(entry => res.status(201).json(entry))
     .catch(e => res.status(500).json(e));
