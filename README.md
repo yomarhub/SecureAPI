@@ -27,7 +27,7 @@ Une API REST sécurisée construite avec Node.js, Express et SQLite, incluant l'
 
 1. **Cloner le repository**
 ```bash
-git clone <repository-url>
+git clone https://github.com/yomarhub/SecureAPI
 cd SecureAPI
 ```
 
