@@ -12,6 +12,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.TEXT,
       allowNull: false
     },
+    hashedPassword: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      unique: true
+    },
     roleId: {
       type: DataTypes.INTEGER,
       allowNull: false,
