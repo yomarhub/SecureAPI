@@ -7,17 +7,22 @@ const map = { products: 'Product', categories: 'Category', roles: 'Role', users:
 router.use(TokenChecker());
 router.get('/profile', (req, res) => {
   const { User } = req.app.models;
-  req.payload?.userId ?
-    User.findByPk(req.payload.userId, { include: ['role'] })
-      .then(user => res.json(user))
-      .catch(e => res.status(500).json(e))
-    :
-  res.json(req.app.payload);
+  if (req.user?.userId) {
+    User.findByPk(req.user.userId, { include: ['role'], attributes: { exclude: ['hashedPassword', 'roleId'] } })
+      .then(user => user ? res.json(user) : res.status(404).json({ message: 'User not found' }))
+      .catch(e => res.status(500).json(e));
+  } else {
+    res.status(401).json({ message: 'Unauthorized' });
+  }
 });
 
 router.get('/:table', (req, res) => {
+  if (!map[req.params.table]) {
+    return res.status(404).json({ message: 'Table not found' });
+  }
+
   const page = req.query.page ? (parseInt(req.query.page) ?? 0) : 0;
-  const limit = parseInt(req.query.count);
+  const limit = parseInt(req.query.count) || 50;
   const sort = req.query.sort?.split(',').map(s => [s.replace(/^-/, ''), /^-/.test(s) ? 'DESC' : 'ASC']);
   const fields = req.query.fields?.split(',');
   const include = req.query.include?.split(',');
@@ -81,7 +86,7 @@ router.get('/:table', (req, res) => {
   }
 
   table.findAndCountAll(options)
-    .then(({ count: total, rows }) => res.json({ total, currentPage: page ?? 0, totalPages: Math.ceil(total / limit), entries: rows }))
+    .then(({ count: total, rows }) => res.json({ total, currentPage: page ?? 0, totalPages: limit > 0 ? Math.ceil(total / limit) : 0, entries: rows }))
     .catch(e => res.status(500).json(e));
 });
 
