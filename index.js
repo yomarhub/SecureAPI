@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config({ quiet: true });
 const { Sequelize } = require('sequelize');
-const sequilize = new Sequelize('sqlite://./data/database.sqlite');
+const sequilize = new Sequelize('sqlite://./data/database.sqlite', { logging: false });
 const models = require('./models/init-models')(sequilize);
 
 const PORT = process.env.PORT || 3000;
@@ -14,12 +14,8 @@ app.models = models;
 app.get('/', (_req, res) => {
   res.send('Hello World')
 })
-// app.use('/products', require('./routes/products'));
-// app.use('/categories', require('./routes/categories'));
-// app.use('/roles', require('./routes/roles'))
-// app.use('/users', require('./routes/users'));
-// app.use('/tokens', require('./routes/tokens'));
 app.use('/', require('./routes/entries'));
+app.use('/auth', require('./routes/auth'));
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`)

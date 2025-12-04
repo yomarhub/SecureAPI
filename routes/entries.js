@@ -1,22 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const { Op } = require('sequelize');
+const { TokenChecker } = require('../src/middlewares');
 const map = { products: "Product", categories: "Category", roles: "Role", users: "User", tokens: "Token" };
 
+router.get('/profile', (req, res) => {
+  const { User } = req.app.models;
+  req.payload?.userId ?
+    User.findByPk(req.payload.userId, { include: ["role"] })
+      .then(user => res.json(user))
+      .catch(e => res.status(500).json(e))
+    :
+  res.json("No user logged in");
+});
 
-router.get('/:table', (req, res) => {
+router.get('/:table', TokenChecker, (req, res) => {
   const page = req.query.page ? (parseInt(req.query.page) ?? 0) : 0;
   const limit = parseInt(req.query.count);
   const sort = req.query.sort?.split(",").map(s => [s.replace(/^-/, ""), /^-/.test(s) ? "DESC" : "ASC"])
   const fields = req.query.fields?.split(",")
   const include = req.query.include?.split(",")
 
-  // JSON:API filter support - filter[field][operator]=value
   const filters = {};
   Object.keys(req.query).forEach(key => {
     // Match filter[field][operator]=value
     const operatorMatch = key.match(/^filter\[(\w+)\]\[(\w+)\]$/);
-    // Match filter[field]=value (exact match)
+    // Match filter[field]=value
     const simpleMatch = key.match(/^filter\[(\w+)\]$/);
 
     if (operatorMatch) {
@@ -78,7 +87,7 @@ router.get('/:table', (req, res) => {
 router.post('/:table', (req, res) => {
   const table = req.app.models[map[req.params.table]]
   table.create(req.body)
-    .then(entry => res.json(entry))
+    .then(entry => res.status(201).json(entry))
     .catch(e => res.status(500).json(e));
 });
 

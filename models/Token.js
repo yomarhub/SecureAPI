@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('Token', {
     id: {
       autoIncrement: true,
@@ -16,8 +16,12 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    key: {
+    hash: {
       type: DataTypes.TEXT,
+      allowNull: false
+    },
+    expiresAt: {
+      type: DataTypes.DATE,
       allowNull: false
     }
   }, {
