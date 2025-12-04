@@ -49,9 +49,19 @@ JWT_REFRESH_EXPIRATION=7d
 PORT=3000
 ```
 
-4. **Créer la base de données**
+### Régénérer la base de données
+
+Pour réinitialiser complètement la base de données :
+
 ```bash
+# Supprimer l'ancienne base de données
+rm data/database.sqlite
+
+# Recréer la structure
 sqlite3 data/database.sqlite < create.sql
+
+# Peupler avec des données de test
+node src/seed.js
 ```
 
 ## Utilisation
